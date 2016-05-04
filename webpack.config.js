@@ -40,13 +40,13 @@ module.exports = {
       'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
-    }),
-    new webpack.optimize.DedupePlugin(),
-    new webpack.optimize.UglifyJsPlugin({
-      minimize: true,
-      compress: {
-        warnings: false
-      }
     })
+  //   new webpack.optimize.DedupePlugin(),
+  //   new webpack.optimize.UglifyJsPlugin({
+  //     minimize: true,
+  //     compress: {
+  //       warnings: false
+  //     }
+  //   })
   ]
-}
+};

@@ -1,0 +1,22 @@
+@import '../config/layout';
+
+.productCard {
+  @include flex($justify: center, $direction: column, $alignC: flex-end)
+  margin: 5px;
+  padding: 5px;
+  .asciiFace{
+    min-height: 60px;
+  }
+  p {
+    text-align: center
+  }
+
+  div {
+    @include flex($justify: center)
+
+    p {
+      padding: 3px;
+    }
+  }
+
+}

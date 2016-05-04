@@ -1,0 +1,5 @@
+@import 'client/styles/config/layout';
+
+#storeFront {
+  @include flex($justify: center, $wrap: wrap)
+}
