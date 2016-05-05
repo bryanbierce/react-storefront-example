@@ -1,16 +1,25 @@
 import { Map, List } from 'immutable';
 import actions from '../actions';
 
-const addToProductsNext = (state, products, sortType, dispatch) => {
+const addToProductsNext = (state, products, sortType) => {
   let newState = state;
+
   // check if page is still sorted by same type as when fetch was made
-  if(state.get('sortType') === sortType) {
-    // clean new products
-    products = products.split('\n');
-    products.pop();
-    products = products.map((prod) => JSON.parse(prod));
+  if (state.get('sortType') === sortType) {
     // add new products to end of productsNext queue
     newState = state.update('productsNext', (pn) => pn.push(products));
+  }
+
+  return newState;
+};
+
+const addToProductsViewing = (state, products, sortType) => {
+  let newState = state;
+
+  // make sure products fetched on current sortType
+  if (sortType === state.get('sortType')) {
+    // add the new products to the current viewing
+    newState = state.update('productsViewing', (pv) => pv.concat(products));
   }
 
   return newState;
@@ -19,12 +28,13 @@ const addToProductsNext = (state, products, sortType, dispatch) => {
 const addToViewingFromNext = (state, dispatch) => {
   const nextQueue = state.get('productsNext');
   let newState = state;
+
   // check if products are in queue
   if (nextQueue.size) {
-      // add next batch of products to productsViewing and remove from productsNext
+    // add next batch of products to productsViewing and remove from productsNext
     newState = (
       state
-        .update('productsViewing', (prods) => prods.push(nextQueue.first()))
+        .update('productsViewing', (prods) => prods.concat(nextQueue.first()))
         .update('productsNext', (prods) => prods.rest())
       );
   } else {
@@ -34,6 +44,7 @@ const addToViewingFromNext = (state, dispatch) => {
       setTimeout(dispatch, 100, actions.addToProductsViewing(dispatch));
     }
   }
+
   return newState;
 };
 
@@ -41,8 +52,10 @@ const addToViewingFromNext = (state, dispatch) => {
 const doneLoading = (state) => state.set('isLoading', false);
 
 // update current page by new pages #
-const increasePage = (state, pages) => state.update('page', (page) => page + pages);
+const setPage = (state, page) => state.set('page', page);
 
+
+// reducer reads action types and dispatches data to handlers
 const reducer = (state, action) => {
   switch (action.type) {
     case 'ADD_TO_PRODUCTS_NEXT':
@@ -52,15 +65,18 @@ const reducer = (state, action) => {
         action.sortType,
         action.dispatch
       );
-    case 'ADD_TO_PRODCUTS_VIEWING':
-      return addToViewingFromNext(state, action.dispatch);
+    case 'ADD_TO_PRODUCTS_VIEWING':
+      return addToProductsViewing(state, action.products, action.sortType);
+    case 'ADD_TO_PRODUCTS_VIEWING_FROM_NEXT':
+      return addToViewingFromNext(state, action.sortType, action.dispatch);
     case 'DONE_LOADING':
       return doneLoading(state);
-    case 'INCREASE_PAGE':
-      return increasePage(state, action.pages);
+    case 'SET_PAGE':
+      return setPage(state, action.page);
     default:
       return state;
   }
 };
+
 
 export default reducer;
