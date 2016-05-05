@@ -1,41 +1,57 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import ProductCard from './StoreFront/ProductCard';
-import axios from 'axios';
+import actions from './redux/actions';
 import './styles/components/storeFront';
+const { bool, func, number, object, string } = React.PropTypes;
 
-class Store extends React.Component {
+class StoreFront extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      raw: '',
-      response: []
-    };
   }
+
   componentDidMount() {
-    axios.get('/api/products?limit=20&skip=0&sort=id')
-    .then((res) => {
-      const raw = res.data;
-      const responseArray = res.data.split('\n');
-      responseArray.pop();
-      const response = responseArray.map((item) => JSON.parse(item));
-      this.setState({ response, raw });
-    })
-    .catch((res) => console.log(res));
+    const { getNextProducts, pageMax, sortType } = this.props;
+    getNextProducts(0, sortType, pageMax);
   }
 
   render() {
     return (
       <div id="storeFront">
         {
-          this.state.response.map((item) => <ProductCard {...item}/>)
+          this.props.products.map((item) => <ProductCard {...item}/>)
         }
-        <pre>
-          { this.state.raw }
-        </pre>
       </div>
     );
   }
 }
+StoreFront.propTypes = {
+  addToProductsViewing: func,
+  ads: object,
+  adNext: string,
+  getNextProducts:func,
+  isLoading:bool,
+  products: object,
+  pageMax: number,
+  sortType: string
+};
 
-export default Store;
+
+const mapDispatchToProps = (dispatch) => ({
+  addToProductsViewing: (disp) => dispatch(actions.addToProductsViewing(disp)),
+  getNextProducts: (page, pageMax, sortType) => (
+    dispatch(actions.getNextProducts(page, pageMax, sortType))
+  )
+});
+
+const mapStateToProps = (state) => ({
+  ads: state.get('adds'),
+  adNext: state.get('adNext'),
+  isLoading: state.get('isLoading'),
+  products: state.get('productsViewing'),
+  pageMax: state.get('pageMax'),
+  sortType: state.get('sortType')
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(StoreFront);

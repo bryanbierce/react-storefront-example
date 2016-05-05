@@ -1,36 +1,63 @@
-function addToProductsNext(state, products) {
-  // clean new products
-  // create new state
-  // return new state
-}
+import { Map, List } from 'immutable';
+import actions from '../actions';
 
-function addToViewingFromNext(state) {
-  // length of productsNext
-    // if length
-      // remove 20 products from the productsNext
-      // add these to productsViewing
-      // return new state
-    // if no length
-      // check if loading
-        // if yes
-          // timeout for 300ms and call self
-        // if no
-          // return original state
-}
+const addToProductsNext = (state, products, sortType, dispatch) => {
+  let newState = state;
+  // check if page is still sorted by same type as when fetch was made
+  if(state.get('sortType') === sortType) {
+    // clean new products
+    products = products.split('\n');
+    products.pop();
+    products = products.map((prod) => JSON.parse(prod));
+    // add new products to end of productsNext queue
+    newState = state.update('productsNext', (pn) => pn.push(products));
+  }
 
-function doneLoading(state) {
-  // change isLoading to false
-  // return new state
-}
+  return newState;
+};
+
+const addToViewingFromNext = (state, dispatch) => {
+  const nextQueue = state.get('productsNext');
+  let newState = state;
+  // check if products are in queue
+  if (nextQueue.size) {
+      // add next batch of products to productsViewing and remove from productsNext
+    newState = (
+      state
+        .update('productsViewing', (prods) => prods.push(nextQueue.first()))
+        .update('productsNext', (prods) => prods.rest())
+      );
+  } else {
+    // check if still loading
+    if (state.get('isLoading')) {
+      // after 100ms try again
+      setTimeout(dispatch, 100, actions.addToProductsViewing(dispatch));
+    }
+  }
+  return newState;
+};
+
+// change isLoading to false
+const doneLoading = (state) => state.set('isLoading', false);
+
+// update current page by new pages #
+const increasePage = (state, pages) => state.update('page', (page) => page + pages);
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'ADD_TO_PRODUCTS_NEXT':
-      return addToProductsNext(state, action.products);
+      return addToProductsNext(
+        state,
+        action.products,
+        action.sortType,
+        action.dispatch
+      );
     case 'ADD_TO_PRODCUTS_VIEWING':
-      return addToViewingFromNext(state);
+      return addToViewingFromNext(state, action.dispatch);
     case 'DONE_LOADING':
       return doneLoading(state);
+    case 'INCREASE_PAGE':
+      return increasePage(state, action.pages);
     default:
       return state;
   }

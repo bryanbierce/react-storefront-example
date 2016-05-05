@@ -1,10 +1,10 @@
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, createStore, compose } from 'redux';
 import ReduxThunk from 'redux-thunk';
 import reducer from './reducers';
 import { Map, List } from 'immutable';
 
 const initialState = new Map({
-  adViewing: '',
+  ads: new List(),
   adNext: '',
   isLoading: true,
   productsAll: new Map(),
@@ -12,7 +12,7 @@ const initialState = new Map({
   productsViewing: new List(),
   page: 0,
   pageViewing: 0,
-  pageMax: 100000,
+  pageMax: 100,
   sortReverse: false,
   sortType: 'id'
 });
@@ -20,5 +20,8 @@ const initialState = new Map({
 export default createStore(
   reducer,
   initialState,
-  applyMiddleware(ReduxThunk)
+  compose(
+    applyMiddleware(ReduxThunk),
+    window.devToolsExtension ? window.devToolsExtension() : f => f
+  )
 );
