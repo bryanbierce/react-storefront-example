@@ -12,8 +12,8 @@ const formatProducts = (data) => {
 /*             Actions         */
 
 // take products, their sort type and trigger add to queue
-const addToProductsNext = (products, sortType, dispatch) => (
-  { type: 'ADD_TO_PRODUCTS_NEXT', products, sortType, dispatch }
+const addToProductsNext = (products, sortType) => (
+  { type: 'ADD_TO_PRODUCTS_NEXT', products, sortType }
 );
 
 // take prodcuts and their sort type and trigger add to viewing
@@ -22,8 +22,8 @@ const addToProductsViewing = (products, sortType) => (
 );
 
 // trigger a move of next product batch from queue to viewing
-const addToProductsViewingFromNext = (dispatch) => (
-  { type: 'ADD_TO_PRODUCTS_VIEWING_FROM_NEXT', dispatch }
+const addToProductsViewingFromNext = () => (
+  { type: 'ADD_TO_PRODUCTS_VIEWING_FROM_NEXT' }
 );
 
 // thunk which fetches next batch, routes results to next action

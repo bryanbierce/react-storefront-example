@@ -9,10 +9,12 @@ const initialState = new Map({
   isLoading: true,
   productsAll: new Map(),
   productsNext: new List(),
+  productsNextCount: 0,
   productsViewing: new List(),
   page: 0,
   pageViewing: 0,
-  pageMax: 100,
+  pageMax: 999,
+  scrollRetry: false,
   sortReverse: false,
   sortType: 'id'
 });

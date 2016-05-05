@@ -7,7 +7,11 @@ const addToProductsNext = (state, products, sortType) => {
   // check if page is still sorted by same type as when fetch was made
   if (state.get('sortType') === sortType) {
     // add new products to end of productsNext queue
-    newState = state.update('productsNext', (pn) => pn.push(products));
+    newState = (
+      state
+        .update('productsNext', (pn) => pn.push(products))
+        .update('productNextCount', (count) => count + 1)
+    );
   }
 
   return newState;
@@ -25,7 +29,7 @@ const addToProductsViewing = (state, products, sortType) => {
   return newState;
 };
 
-const addToViewingFromNext = (state, dispatch) => {
+const addToViewingFromNext = (state) => {
   const nextQueue = state.get('productsNext');
   let newState = state;
 
@@ -36,12 +40,13 @@ const addToViewingFromNext = (state, dispatch) => {
       state
         .update('productsViewing', (prods) => prods.concat(nextQueue.first()))
         .update('productsNext', (prods) => prods.rest())
+        .update('productsNextCount', (count) => count - 1)
       );
   } else {
     // check if still loading
     if (state.get('isLoading')) {
-      // after 100ms try again
-      setTimeout(dispatch, 100, actions.addToProductsViewing(dispatch));
+      // retry action
+      newState = state.set('scrollRetry', true);
     }
   }
 
@@ -68,7 +73,7 @@ const reducer = (state, action) => {
     case 'ADD_TO_PRODUCTS_VIEWING':
       return addToProductsViewing(state, action.products, action.sortType);
     case 'ADD_TO_PRODUCTS_VIEWING_FROM_NEXT':
-      return addToViewingFromNext(state, action.sortType, action.dispatch);
+      return addToViewingFromNext(state, action.sortType, action.retry);
     case 'DONE_LOADING':
       return doneLoading(state);
     case 'SET_PAGE':

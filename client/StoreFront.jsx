@@ -12,34 +12,58 @@ class StoreFront extends React.Component {
   }
 
   componentDidMount() {
-    const { getNextProducts, pageMax, sortType } = this.props;
+    const { addToProductsViewingFromNext, getNextProducts, pageMax, sortType } = this.props;
+
+    // start fetching products
     getNextProducts(0, sortType, pageMax);
+
+    // on scroll check scroll position and add more if 200px from the end
+    window.onscroll = (event) => {
+      const threshold = document.body.scrollHeight - 200;
+      const scrolled = window.innerHeight + window.scrollY;
+
+      if (scrolled >= threshold) {
+        addToProductsViewingFromNext();
+      }
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('will receive');
+    if (nextProps.scrollRetry) {
+      console.log('visible retry flag');
+      this.props.addToProductsViewingFromNext();
+    }
   }
 
   render() {
     return (
       <div id="storeFront">
         {
-          this.props.products.map((item) => <ProductCard {...item}/>)
+          this.props.products.map((item) => (
+            <ProductCard key={ item.id } { ...item } />
+          ))
         }
       </div>
     );
   }
 }
 StoreFront.propTypes = {
-  addToProductsViewing: func,
+  addToProductsViewingFromNext: func,
   ads: object,
   adNext: string,
-  getNextProducts:func,
-  isLoading:bool,
+  getNextProducts: func,
+  isLoading: bool,
+  nextCount: number,
   products: object,
   pageMax: number,
+  scrollRetry: bool,
   sortType: string
 };
 
 
 const mapDispatchToProps = (dispatch) => ({
-  addToProductsViewing: (disp) => dispatch(actions.addToProductsViewing(disp)),
+  addToProductsViewingFromNext: (retry) => dispatch(actions.addToProductsViewingFromNext(retry)),
   getNextProducts: (page, pageMax, sortType) => (
     dispatch(actions.getNextProducts(page, pageMax, sortType))
   )
@@ -49,8 +73,10 @@ const mapStateToProps = (state) => ({
   ads: state.get('adds'),
   adNext: state.get('adNext'),
   isLoading: state.get('isLoading'),
+  nextCount: state.get('productNextCount'),
   products: state.get('productsViewing'),
   pageMax: state.get('pageMax'),
+  scrollRetry: state.get('scrollRetry'),
   sortType: state.get('sortType')
 });
 
