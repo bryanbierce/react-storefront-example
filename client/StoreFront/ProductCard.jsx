@@ -7,10 +7,10 @@ const ProductCard = (props) => (
     <p style={{ fontSize: props.size }}
       className="asciiFace"
     >{ props.face }</p>
-    <p>{ props.id }</p>
+    <p className="productId">{ props.id }</p>
     <div>
-      <p>{ props.price }</p>
-      <p>{ props.date }</p>
+      <p className="productPrice">{ props.price }</p>
+      <p className="productDate">{ props.date }</p>
     </div>
   </div>
 );
@@ -18,7 +18,7 @@ ProductCard.propTypes = {
   date: string,
   face: string,
   id: string,
-  price: number,
+  price: string,
   size: number
 };
 

@@ -30,7 +30,8 @@ class StoreFront extends React.Component {
     // pre generate ads list
     prepareAds(pageMax);
 
-    // on scroll check scroll position and add more if 200px from the end
+    // on scroll check scroll position
+    // add more products if 200px from the end
     window.onscroll = () => {
       const threshold = document.body.scrollHeight - 200;
       const scrolled = window.innerHeight + window.scrollY;
@@ -48,15 +49,45 @@ class StoreFront extends React.Component {
     }
   }
 
+  formatProduct(item) {
+    const formatted = {};
+
+
+    const now = Date.now();
+    const then = Date.parse(item.date);
+    const daysDistance = Math.round((now - then) / 86400000);
+    let relativeDate;
+
+    if (daysDistance === 1) {
+      relativeDate = `${daysDistance} day ago`;
+    } else if (daysDistance < 7) {
+      relativeDate = `${daysDistance} days ago`;
+    } else if (daysDistance === 7){
+      relativeDate = 'a week ago';
+    } else {
+      relativeDate = item.date.split(' ').slice(0, 4).join(' ');
+    }
+
+    formatted.id = item.id;
+    formatted.face = item.face;
+    formatted.size = item.size;
+    formatted.price = `$${(item.price / 100).toFixed(2)}`;
+    formatted.date = relativeDate;
+    return formatted;
+  }
+
   getDisplayItems() {
     return this.props.products.reduce((display, item, i) => {
+      // if 21st consecutive product, insert ad first
       if (i && !(i % 20)) {
         const j = i / 20;
         const img = this.props.adList.get(j);
-        // console.log(img);
         display.push(<Ad key={ j }img={ img } />);
       }
-      display.push(<ProductCard key={ item.id } { ...item } />);
+
+      const itemInfo = this.formatProduct(item);
+      display.push(<ProductCard key={ itemInfo.id } { ...itemInfo } />);
+
       return display;
     }, []);
   }

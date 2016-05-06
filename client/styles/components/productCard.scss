@@ -2,7 +2,7 @@
 
 .productCard {
   @include flex($justify: center, $direction: column, $alignC: flex-end)
-  margin: 5px;
+  margin: 30px 50px;
   padding: 5px;
   .asciiFace{
     min-height: 60px;
@@ -11,12 +11,26 @@
     text-align: center
   }
 
+  .productId {
+    margin: 2 0;
+  }
+
   div {
     @include flex($justify: center)
 
     p {
       padding: 3px;
     }
+
+    .productPrice {
+      margin: 0 5px 0 0;
+    }
+
+    .productDate {
+      text-align: right;
+      margin: 0 0 0 5px;
+    }
+
   }
 
 }
