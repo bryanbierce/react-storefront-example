@@ -27,6 +27,19 @@ const addToProductsViewingFromNext = () => (
   { type: 'ADD_TO_PRODUCTS_VIEWING_FROM_NEXT' }
 );
 
+
+// trigger change of 'isLoading' flag to false
+const doneLoading = () => ({ type: 'DONE_LOADING' });
+
+// trigger ad list generation based on max products size
+const prepareAds = (pageMax) => ({ type: 'PREPARE_ADS', pageMax });
+
+// set the last ad for later comparison with the next ad
+const setAdLast = (adLast) => ({ type: 'SET_AD_LAST', adLast });
+
+// trigger increase in current page by #pages
+const setPage = (page) => ({ type: 'SET_PAGE', page });
+
 // thunk which fetches next batch, routes results to next action
 // if max data not reached, sends next request
 const getNextProducts = (page, sortType, pageMax) => (
@@ -50,7 +63,7 @@ const getNextProducts = (page, sortType, pageMax) => (
       }
 
       // if less than maximum send next request
-      if (newPage < pageMax) {
+      if (products.length) {
         dispatch(getNextProducts(newPage, sortType, pageMax));
       } else {
         dispatch(doneLoading());
@@ -62,19 +75,6 @@ const getNextProducts = (page, sortType, pageMax) => (
     })
   )
 );
-
-// trigger change of 'isLoading' flag to false
-const doneLoading = () => ({ type: 'DONE_LOADING' });
-
-// trigger ad list generation based on max products size
-const prepareAds = (pageMax) => ({ type: 'PREPARE_ADS', pageMax });
-
-// set the last ad for later comparison with the next ad
-const setAdLast = (adLast) => ({ type: 'SET_AD_LAST', adLast });
-
-// trigger increase in current page by #pages
-const setPage = (page) => ({ type: 'SET_PAGE', page });
-
 
 // export all actions
 const actions = {

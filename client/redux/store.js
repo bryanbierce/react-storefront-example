@@ -14,7 +14,7 @@ const initialState = new Map({
   productsViewing: new List(),
   page: 0,
   pageViewing: 0,
-  pageMax: 999,
+  pageMax: 999999,
   scrollRetry: false,
   sortReverse: false,
   sortType: 'id'

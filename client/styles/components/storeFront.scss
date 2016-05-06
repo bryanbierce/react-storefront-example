@@ -2,4 +2,9 @@
 
 #storeFront {
   @include flex($justify: center, $wrap: wrap)
+
+  #endFooter {
+    width: 100%;
+    text-align: center;
+  }
 }
