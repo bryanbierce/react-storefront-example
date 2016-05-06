@@ -3,9 +3,10 @@ import ReduxThunk from 'redux-thunk';
 import reducer from './reducers';
 import { Map, List } from 'immutable';
 
+
+
 const initialState = new Map({
-  ads: new List(),
-  adNext: '',
+  adList: new List(),
   isLoading: true,
   productsAll: new Map(),
   productsNext: new List(),

@@ -56,6 +56,31 @@ const addToViewingFromNext = (state) => {
 // change isLoading to false
 const doneLoading = (state) => state.set('isLoading', false);
 
+// create a list of ads with no two adjacent ads being the same
+const prepareAds = (state, pageMax) => {
+  let i = Math.floor(pageMax / 20) + 1;
+  let adList = new List();
+
+  const firstAdNum = document.getElementById('landingAd').src.split('?r=')[1];
+  let lastNum = parseInt(firstAdNum, 10);
+
+  // for every 20 possible products make 1 add not equal to the last
+  while (--i) {
+    let newNum = Math.floor(Math.random() * 1000);
+    while ((newNum % 16) === (lastNum % 16)) {
+      newNum = Math.floor(Math.random() * 1000);
+    }
+    adList = adList.push(`/ad/?r=${newNum}`);
+    lastNum = newNum;
+  }
+
+  // return state with new adList
+  return state.set('adList', adList);
+};
+
+// update adLast with the most recently displayed ad
+const setAdLast = (state, adLast) => state.set('adLast', adLast);
+
 // update current page by new pages #
 const setPage = (state, page) => state.set('page', page);
 
@@ -76,6 +101,10 @@ const reducer = (state, action) => {
       return addToViewingFromNext(state, action.sortType, action.retry);
     case 'DONE_LOADING':
       return doneLoading(state);
+    case 'PREPARE_ADS':
+      return prepareAds(state, action.pageMax);
+    case 'SET_AD_LAST':
+      return setAdLast(state, action.adLast);
     case 'SET_PAGE':
       return setPage(state, action.page);
     default:

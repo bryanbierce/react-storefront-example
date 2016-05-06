@@ -2,6 +2,7 @@ import axios from 'axios';
 
 /*           Utils              */
 
+// get object array from JSON response
 const formatProducts = (data) => {
   const dataArray = data.split('\n');
   dataArray.pop();
@@ -65,6 +66,12 @@ const getNextProducts = (page, sortType, pageMax) => (
 // trigger change of 'isLoading' flag to false
 const doneLoading = () => ({ type: 'DONE_LOADING' });
 
+// trigger ad list generation based on max products size
+const prepareAds = (pageMax) => ({ type: 'PREPARE_ADS', pageMax });
+
+// set the last ad for later comparison with the next ad
+const setAdLast = (adLast) => ({ type: 'SET_AD_LAST', adLast });
+
 // trigger increase in current page by #pages
 const setPage = (page) => ({ type: 'SET_PAGE', page });
 
@@ -76,6 +83,8 @@ const actions = {
   addToProductsViewingFromNext,
   getNextProducts,
   doneLoading,
+  prepareAds,
+  setAdLast,
   setPage
 };
 
