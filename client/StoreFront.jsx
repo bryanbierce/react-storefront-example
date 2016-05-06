@@ -61,17 +61,18 @@ class StoreFront extends React.Component {
     }, []);
   }
 
-  getLoading() {
-    if (this.props.isLoading) {
-      // TODO
-      // loading animation
-    }
-  }
-
   getFooter() {
-    const footer = [];
-    if (!this.props.isLoading) {
-      footer.push(<p id="endFooter">~ End of Catalogue ~</p>);
+    let footer;
+
+    // if loading display animation, otherwise place 'end' message
+    if (this.props.isLoading) {
+      footer = (
+        <div id="loadingWindow">
+          <div id="loading" />
+        </div>
+      );
+    } else {
+      footer = <p id="endFooter">~ End of Catalogue ~</p>;
     }
     return footer;
   }
