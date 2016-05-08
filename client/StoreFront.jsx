@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import SortBar from './StoreFront/SortBar';
 import ProductCard from './StoreFront/ProductCard';
 import Ad from './StoreFront/Ad';
 import actions from './redux/actions';
@@ -25,7 +26,7 @@ class StoreFront extends React.Component {
     } = this.props;
 
     // start fetching products
-    getNextProducts(0, sortType, pageMax);
+    getNextProducts(0, sortType);
 
     // pre generate ads list
     prepareAds(pageMax);
@@ -43,9 +44,16 @@ class StoreFront extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { scrollRetry, sortType } = nextProps;
+
     // Check if retry flag is on, try to add new products again
-    if (nextProps.scrollRetry) {
+    if ( nextProps.scrollRetry) {
       this.props.addToProductsViewingFromNext();
+    }
+
+    // Check if the sortType has changed. Start fetching new product list
+    if (this.props.sortType !== sortType) {
+      nextProps.getNextProducts(0, sortType);
     }
   }
 
@@ -108,9 +116,29 @@ class StoreFront extends React.Component {
     return footer;
   }
 
+  handleSortClick(e) {
+    const sortType = e.target.value;
+
+    // update sortType
+    this.props.changeSort(sortType);
+    //remove products in queue
+    this.props.clearProductsNext();
+    // remove current products
+    this.props.clearProductsViewing();
+    // ensure isLoading is true
+    this.props.beginLoading();
+    // restart product fetching
+    this.props.getNextProducts(0, sortType);
+  }
+
   render() {
     return (
       <div id="storeFront">
+        <SortBar
+          handleSortClick={ this.handleSortClick }
+          sortOptions={ this.props.sortOptions }
+          sortType={ this.props.sortType }
+        />
         {
           this.getDisplayItems()
         }
@@ -124,6 +152,11 @@ class StoreFront extends React.Component {
 StoreFront.propTypes = {
   addToProductsViewingFromNext: func,
   adList: object,
+  beginLoading: func,
+  changeSort: func,
+  clearProductsNext: func,
+  clearProductsViewing: func,
+  dispatch: func,
   getNextProducts: func,
   isLoading: bool,
   nextCount: number,
@@ -132,14 +165,19 @@ StoreFront.propTypes = {
   prepareAds: func,
   scrollRetry: bool,
   setAdLast: func,
+  sortOptions: object,
   sortType: string
 };
 
 
 const mapDispatchToProps = (dispatch) => ({
   addToProductsViewingFromNext: (retry) => dispatch(actions.addToProductsViewingFromNext(retry)),
-  getNextProducts: (page, pageMax, sortType) => (
-    dispatch(actions.getNextProducts(page, pageMax, sortType))
+  beginLoading: () => dispatch(actions.beginLoading()),
+  changeSort: (sortType) => dispatch(actions.changeSort(sortType)),
+  clearProductsNext: () => dispatch(actions.clearProductsNext()),
+  clearProductsViewing: () => dispatch(actions.clearProductsViewing()),
+  getNextProducts: (page, sortType) => (
+    dispatch(actions.getNextProducts(page, sortType))
   ),
   prepareAds: (pageMax) => dispatch(actions.prepareAds(pageMax)),
   setAdLast: (adLast) => dispatch(actions.setAdLast(adLast))
@@ -152,7 +190,9 @@ const mapStateToProps = (state) => ({
   products: state.get('productsViewing'),
   pageMax: state.get('pageMax'),
   scrollRetry: state.get('scrollRetry'),
+  sortOptions: state.get('sortOptions'),
   sortType: state.get('sortType')
 });
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(StoreFront);

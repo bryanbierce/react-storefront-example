@@ -27,6 +27,17 @@ const addToProductsViewingFromNext = () => (
   { type: 'ADD_TO_PRODUCTS_VIEWING_FROM_NEXT' }
 );
 
+// turn isLoading to true
+const beginLoading = () => ({ type: 'BEGIN_LOADING' });
+
+// trigger change of sort type
+const changeSort = (sortType) => ({ type: 'CHANGE_SORT', sortType})
+
+// empty the products queue
+const clearProductsNext = () => ({ type: 'CLEAR_PRODUCTS_NEXT' });
+
+// empty the products viewing list
+const clearProductsViewing = () => ({ type: 'CLEAR_PRODUCTS_VIEWING' });
 
 // trigger change of 'isLoading' flag to false
 const doneLoading = () => ({ type: 'DONE_LOADING' });
@@ -42,11 +53,11 @@ const setPage = (page) => ({ type: 'SET_PAGE', page });
 
 // thunk which fetches next batch, routes results to next action
 // if max data not reached, sends next request
-const getNextProducts = (page, sortType, pageMax) => (
+const getNextProducts = (page, sortType) => (
   // fetch next 20
   // then add to products next
   (dispatch) => (
-    axios.get(`/api/products?sort${sortType}&limit=20&skip=${page}`)
+    axios.get(`/api/products?sort=${sortType}&limit=20&skip=${page}`)
     .then((res) => {
       const newPage = page + 20;
       const products = formatProducts(res.data);
@@ -64,14 +75,14 @@ const getNextProducts = (page, sortType, pageMax) => (
 
       // if less than maximum send next request
       if (products.length) {
-        dispatch(getNextProducts(newPage, sortType, pageMax));
+        dispatch(getNextProducts(newPage, sortType));
       } else {
         dispatch(doneLoading());
       }
     })
     .catch(() => {
       // retry request if server responds with error
-      dispatch(getNextProducts(page, sortType, pageMax));
+      dispatch(getNextProducts(page, sortType));
     })
   )
 );
@@ -81,6 +92,10 @@ const actions = {
   addToProductsNext,
   addToProductsViewing,
   addToProductsViewingFromNext,
+  beginLoading,
+  changeSort,
+  clearProductsNext,
+  clearProductsViewing,
   getNextProducts,
   doneLoading,
   prepareAds,

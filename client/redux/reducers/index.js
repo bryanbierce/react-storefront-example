@@ -53,6 +53,18 @@ const addToViewingFromNext = (state) => {
   return newState;
 };
 
+// reset loading to true
+const beginLoading = (state) => state.set('isLoading', true);
+
+// update sort type. clear product list
+const changeSort = (state, sortType) => state.set('sortType', sortType);
+
+// reset productsNext to an empty list
+const clearProductsNext = (state) => state.set('prodcutsViewing', new List());
+
+// reset productsViewing to empty list
+const clearProductsViewing = (state) => state.set('productsViewing', new List());
+
 // change isLoading to false
 const doneLoading = (state) => state.set('isLoading', false);
 
@@ -99,6 +111,14 @@ const reducer = (state, action) => {
       return addToProductsViewing(state, action.products, action.sortType);
     case 'ADD_TO_PRODUCTS_VIEWING_FROM_NEXT':
       return addToViewingFromNext(state, action.sortType, action.retry);
+    case 'BEGIN_LOADING':
+      return beginLoading(state);
+    case 'CHANGE_SORT':
+      return changeSort(state, action.sortType);
+    case 'CLEAR_PRODUCTS_NEXT':
+      return clearProductsNext(state);
+    case 'CLEAR_PRODUCTS_VIEWING':
+      return clearProductsViewing(state);
     case 'DONE_LOADING':
       return doneLoading(state);
     case 'PREPARE_ADS':

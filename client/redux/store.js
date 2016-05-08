@@ -4,7 +4,6 @@ import reducer from './reducers';
 import { Map, List } from 'immutable';
 
 
-
 const initialState = new Map({
   adList: new List(),
   isLoading: true,
@@ -15,6 +14,7 @@ const initialState = new Map({
   page: 0,
   pageViewing: 0,
   pageMax: 999999,
+  sortOptions: new List(['id', 'price', 'size']),
   scrollRetry: false,
   sortReverse: false,
   sortType: 'id'
