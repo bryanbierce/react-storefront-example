@@ -31,7 +31,7 @@ const addToProductsViewingFromNext = () => (
 const beginLoading = () => ({ type: 'BEGIN_LOADING' });
 
 // trigger change of sort type
-const changeSort = (sortType) => ({ type: 'CHANGE_SORT', sortType})
+const changeSort = (sortType) => ({ type: 'CHANGE_SORT', sortType });
 
 // empty the products queue
 const clearProductsNext = () => ({ type: 'CLEAR_PRODUCTS_NEXT' });
@@ -41,6 +41,9 @@ const clearProductsViewing = () => ({ type: 'CLEAR_PRODUCTS_VIEWING' });
 
 // trigger change of 'isLoading' flag to false
 const doneLoading = () => ({ type: 'DONE_LOADING' });
+
+// trigger the change of the 'scrollRetry' to false
+const endScrollRetry = () => ({ type: 'END_SCROLL_RETRY' });
 
 // trigger ad list generation based on max products size
 const prepareAds = (pageMax) => ({ type: 'PREPARE_ADS', pageMax });
@@ -65,16 +68,16 @@ const getNextProducts = (page, sortType) => (
       // update current page
       dispatch(setPage(newPage));
 
-      if (newPage <= 20) {
-        // add products straight to viewing
-        dispatch(addToProductsViewing(products, sortType));
-      } else {
-        // add products to queue
-        dispatch(addToProductsNext(products, sortType, dispatch));
-      }
-
-      // if less than maximum send next request
+      // if products were received
       if (products.length) {
+        // set in next products queue
+        if (newPage <= 20) {
+          // add products straight to viewing
+          dispatch(addToProductsViewing(products, sortType));
+        } else {
+          // add products to queue
+          dispatch(addToProductsNext(products, sortType));
+        }
         dispatch(getNextProducts(newPage, sortType));
       } else {
         dispatch(doneLoading());
@@ -96,8 +99,9 @@ const actions = {
   changeSort,
   clearProductsNext,
   clearProductsViewing,
-  getNextProducts,
   doneLoading,
+  endScrollRetry,
+  getNextProducts,
   prepareAds,
   setAdLast,
   setPage

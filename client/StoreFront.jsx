@@ -47,7 +47,7 @@ class StoreFront extends React.Component {
     const { scrollRetry, sortType } = nextProps;
 
     // Check if retry flag is on, try to add new products again
-    if ( nextProps.scrollRetry) {
+    if (scrollRetry) {
       this.props.addToProductsViewingFromNext();
     }
 
@@ -70,7 +70,7 @@ class StoreFront extends React.Component {
       relativeDate = `${daysDistance} day ago`;
     } else if (daysDistance < 7) {
       relativeDate = `${daysDistance} days ago`;
-    } else if (daysDistance === 7){
+    } else if (daysDistance === 7) {
       relativeDate = 'a week ago';
     } else {
       relativeDate = item.date.split(' ').slice(0, 4).join(' ');
@@ -121,7 +121,9 @@ class StoreFront extends React.Component {
 
     // update sortType
     this.props.changeSort(sortType);
-    //remove products in queue
+    // turn off scroll retry flag
+    this.props.endScrollRetry();
+    // remove products in queue
     this.props.clearProductsNext();
     // remove current products
     this.props.clearProductsViewing();
@@ -157,6 +159,7 @@ StoreFront.propTypes = {
   clearProductsNext: func,
   clearProductsViewing: func,
   dispatch: func,
+  endScrollRetry: func,
   getNextProducts: func,
   isLoading: bool,
   nextCount: number,
@@ -176,6 +179,7 @@ const mapDispatchToProps = (dispatch) => ({
   changeSort: (sortType) => dispatch(actions.changeSort(sortType)),
   clearProductsNext: () => dispatch(actions.clearProductsNext()),
   clearProductsViewing: () => dispatch(actions.clearProductsViewing()),
+  endScrollRetry: () => dispatch(actions.endScrollRetry()),
   getNextProducts: (page, sortType) => (
     dispatch(actions.getNextProducts(page, sortType))
   ),

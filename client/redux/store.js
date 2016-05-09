@@ -16,7 +16,6 @@ const initialState = new Map({
   pageMax: 999999,
   sortOptions: new List(['id', 'price', 'size']),
   scrollRetry: false,
-  sortReverse: false,
   sortType: 'id'
 });
 

@@ -9,7 +9,8 @@ const SortBar = (props) => (
         <div className="sortCheck"
           key={ option }
         >
-          <input id={ `${option}Box` }
+          <input
+            id={ `${option}Box` }
             checked={ props.sortType === option }
             onChange={ props.handleSortClick }
             type="checkbox"

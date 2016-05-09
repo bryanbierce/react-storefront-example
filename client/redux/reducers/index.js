@@ -1,5 +1,4 @@
 import { Map, List } from 'immutable';
-import actions from '../actions';
 
 const addToProductsNext = (state, products, sortType) => {
   let newState = state;
@@ -41,6 +40,7 @@ const addToViewingFromNext = (state) => {
         .update('productsViewing', (prods) => prods.concat(nextQueue.first()))
         .update('productsNext', (prods) => prods.rest())
         .update('productsNextCount', (count) => count - 1)
+        .set('scrollRetry', false)
       );
   } else {
     // check if still loading
@@ -67,6 +67,9 @@ const clearProductsViewing = (state) => state.set('productsViewing', new List())
 
 // change isLoading to false
 const doneLoading = (state) => state.set('isLoading', false);
+
+// change 'scrollRetry' to false
+const endScrollRetry = (state) => state.set('scrollRetry', false);
 
 // create a list of ads with no two adjacent ads being the same
 const prepareAds = (state, pageMax) => {
@@ -104,8 +107,7 @@ const reducer = (state, action) => {
       return addToProductsNext(
         state,
         action.products,
-        action.sortType,
-        action.dispatch
+        action.sortType
       );
     case 'ADD_TO_PRODUCTS_VIEWING':
       return addToProductsViewing(state, action.products, action.sortType);
@@ -121,6 +123,8 @@ const reducer = (state, action) => {
       return clearProductsViewing(state);
     case 'DONE_LOADING':
       return doneLoading(state);
+    case 'END_SCROLL_RETRY':
+      return endScrollRetry(state);
     case 'PREPARE_ADS':
       return prepareAds(state, action.pageMax);
     case 'SET_AD_LAST':
