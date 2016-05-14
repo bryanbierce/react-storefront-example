@@ -5,10 +5,11 @@
   "description": "For all your ascii needs.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "index.js",
+    "start-watch": "nodemon index.js",
     "test": "mocha --require test/helpers/setup.js",
     "build": "webpack",
-    "watch": "webpack -w"
+    "build-watch": "webpack -w"
   },
   "author": "",
   "license": "",
