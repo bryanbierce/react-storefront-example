@@ -1,0 +1,11 @@
+{
+    "extends": "airbnb",
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+      "comma-dangle": [2, "never"],
+      "jsx-curly-spacing": [2, "always"],
+      "quote-props": [2, "consistent-as-needed"]
+    }
+}
